@@ -85,6 +85,6 @@ http://localhost:8000
 ## Author Information
 
 - **Name:** Alicia Keith T. Ramos
-- **Section:** [Your Section]
+- **Section:** BSINTE-2c
 - **Course / Major:** BS Information Technology, Web and Mobile Application
 - **School:** Nueva Vizcaya State University
