@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#2c4a3e" />
+  <title>BioField Notes</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="loginScreen" class="login">
+  <div class="login-card">
+    <h2>BioField Notes</h2>
+    <p>Log in to use Field Notes.</p>
+    <form id="loginForm">
+      <input type="text" id="userName" class="field-input" placeholder="Enter Username" required />
+      <button type="submit" class="save-btn">Log In</button>
+    </form>
+  </div>
+</div>
+
+  <header class="header">
+    <button id="menuBtn" class="burger" aria-label="Menu">&#9776;</button>
+    <h1 class="title">BioField Notes</h1>
+    <button id="newNoteBtn" class="add-btn">+ New</button>
+    
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h2>My Field Notes</h2>
+      <button id="closeMenuBtn" class="icon-btn" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="folder-tabs">
+      <button id="tabActive" class="tab-btn active">Saved (<span id="activeCount">0</span>)</button>
+      <button id="tabTrash" class="tab-btn">Trash (<span id="trashCount">0</span>)</button>
+    </div>
+
+    <div class="search-here">
+      <input type="text" id="searchInput" placeholder="Search notes..." />
+    </div>
+
+    <ul id="notesList" class="notes-lang"></ul>
+
+    <div class="sidebar-footer">
+      <button id="logoutBtn" class="logout-btn">Log Out</button>
+    </div>
+  </aside>
+
+  <div id="overlay" class="overlay"></div>
+
+  <main class="notebook-container">
+
+    <div id="trashBanner" class="trash-banner hidden">
+      <span>This observation is in Trash.</span>
+      <div class="trash-banner-btns">
+        <button id="restoreBtn" class="restore-btn">Retrieve / Restore</button>
+        <button id="permDeleteBtn" class="delete-btn">Delete Note</button>
+      </div>
+    </div>
+
+    <div class="photos">
+      <label for="photoInput" class="photo-upload-btn">
+        &#128247; Take or Upload Specimen Photo
+      </label>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" hidden />
+      <div id="photoPreviewBox" class="photo-preview-box hidden">
+        <img id="photoPreview" src="" alt="Specimen preview" />
+        <button type="button" id="removePhotoBtn" class="remove-photo-btn">&times; Remove Photo</button>
+      </div>
+    </div>
+
+    <input type="text" id="noteTitle" class="note-title-input" placeholder="Title..." />
+
+    <div class="bio-fields">
+      <select id="categorySelect" class="field-input">
+        <option value="Plant">Plants</option>
+        <option value="Animal">Animal</option>
+        <option value="Fungi">Fungi</option>
+        <option value="Microorganism">Microorganism</option>
+        <option value="Habitat / Soil">Habitat / Soil</option>
+      </select>
+      <input type="text" id="habitatInput" class="field-input" placeholder="Location..." />
+    </div>
+
+    <div class="meta-bar">
+      <span id="noteDate">New Observation</span>
+      <button id="moveToTrashBtn" class="danger-link hidden">Move to Trash</button>
+    </div>
+
+    <textarea id="noteBody" class="lined-textarea" placeholder="Write field observations..."></textarea>
+
+    <div class="bottom-actions">
+      <button id="saveBtn" class="save-btn">Save Observation</button>
+    </div>
+  </main>
+
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-card">
+      <h3 id="modalTitle">Move to Trash?</h3>
+      <p id="modalMessage">You can retrieve this observation from the Trash folder.</p>
+      <div class="modal-actions">
+        <button id="cancelModalBtn" class="secondary-btn">Cancel</button>
+        <button id="confirmModalBtn" class="danger-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden">Saved!</div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .catch((err) => console.log('SW registration failed:', err));
+      });
+    }
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
