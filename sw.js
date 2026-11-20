@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biofield-v1';
+const CACHE_NAME = 'biofield-v2';
 const ASSETS = [
   './',
   './index.html',
