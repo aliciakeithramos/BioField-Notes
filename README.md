@@ -33,7 +33,7 @@
 
 ## Photo Upload
 
-<img src="ma-picss/pic.jpg" width="220"/>
+<img src="ma-picss/picc.jpg" width="220"/>
 
 ## Notes Management
 
