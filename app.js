@@ -21,7 +21,6 @@ loginForm.addEventListener('submit', (e) => {
   showToast(`Welcome, ${name}!`);
 });
 
-
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
@@ -43,6 +42,12 @@ const activeCount = document.getElementById('activeCount');
 const trashCount = document.getElementById('trashCount');
 
 const photoInput = document.getElementById('photoInput');
+const openCameraBtn = document.getElementById('openCameraBtn');
+const closeCameraBtn = document.getElementById('closeCameraBtn');
+const captureBtn = document.getElementById('captureBtn');
+const cameraBox = document.getElementById('cameraBox');
+const cameraStream = document.getElementById('cameraStream');
+const cameraCanvas = document.getElementById('cameraCanvas');
 const photoPreviewBox = document.getElementById('photoPreviewBox');
 const photoPreview = document.getElementById('photoPreview');
 const removePhotoBtn = document.getElementById('removePhotoBtn');
@@ -72,6 +77,7 @@ let activeNoteId = null;
 let currentView = 'active';
 let currentPhotoData = '';
 let pendingAction = null;
+let activeStream = null;
 
 function showToast(msg) {
   toast.textContent = msg;
@@ -88,26 +94,84 @@ menuBtn.addEventListener('click', () => toggleSidebar(true));
 closeMenuBtn.addEventListener('click', () => toggleSidebar(false));
 overlay.addEventListener('click', () => toggleSidebar(false));
 
+function setPhotoFromImage(imgSource) {
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    const maxWidth = 800;
+    const scale = Math.min(1, maxWidth / img.width);
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    currentPhotoData = canvas.toDataURL('image/jpeg', 0.75);
+    photoPreview.src = currentPhotoData;
+    photoPreviewBox.classList.remove('hidden');
+  };
+  img.src = imgSource;
+}
+
+function stopCameraStream() {
+  if (activeStream) {
+    activeStream.getTracks().forEach((track) => track.stop());
+    activeStream = null;
+  }
+  cameraStream.srcObject = null;
+  cameraBox.classList.add('hidden');
+}
+
+openCameraBtn.addEventListener('click', async () => {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('Camera not supported on this browser.');
+    return;
+  }
+
+  stopCameraStream();
+
+  try {
+    try {
+      activeStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' } },
+        audio: false
+      });
+    } catch (_) {
+      activeStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false
+      });
+    }
+
+    cameraStream.srcObject = activeStream;
+    cameraBox.classList.remove('hidden');
+    photoPreviewBox.classList.add('hidden');
+  } catch (err) {
+    showToast('Allow camera permission to use camera.');
+  }
+});
+
+captureBtn.addEventListener('click', () => {
+  if (!cameraStream.videoWidth || !cameraStream.videoHeight) return;
+
+  cameraCanvas.width = cameraStream.videoWidth;
+  cameraCanvas.height = cameraStream.videoHeight;
+  const ctx = cameraCanvas.getContext('2d');
+  ctx.drawImage(cameraStream, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+  const capturedDataUrl = cameraCanvas.toDataURL('image/jpeg', 0.85);
+  stopCameraStream();
+  setPhotoFromImage(capturedDataUrl);
+});
+
+closeCameraBtn.addEventListener('click', stopCameraStream);
+
 photoInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
+  stopCameraStream();
   const reader = new FileReader();
   reader.onload = (event) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const maxWidth = 800;
-      const scale = Math.min(1, maxWidth / img.width);
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      currentPhotoData = canvas.toDataURL('image/jpeg', 0.75);
-      photoPreview.src = currentPhotoData;
-      photoPreviewBox.classList.remove('hidden');
-    };
-    img.src = event.target.result;
+    setPhotoFromImage(event.target.result);
   };
   reader.readAsDataURL(file);
 });
@@ -179,6 +243,7 @@ function loadNote(id) {
   const note = notes.find(n => n.id === id);
   if (!note) return;
 
+  stopCameraStream();
   activeNoteId = note.id;
   noteTitle.value = note.title;
   categorySelect.value = note.category;
@@ -209,6 +274,7 @@ function loadNote(id) {
 }
 
 function createNewNote() {
+  stopCameraStream();
   activeNoteId = null;
   currentView = 'active';
   tabActive.classList.add('active');
