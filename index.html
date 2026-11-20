@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#2c4a3e" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="theme-color" content="#2c4a3e"/>
   <title>BioField Notes</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 <div id="loginScreen" class="login">
@@ -27,7 +27,6 @@
     <button id="menuBtn" class="burger" aria-label="Menu">&#9776;</button>
     <h1 class="title">BioField Notes</h1>
     <button id="newNoteBtn" class="add-btn">+ New</button>
-    
   </header>
 
   <aside id="sidebar" class="sidebar">
@@ -65,10 +64,27 @@
     </div>
 
     <div class="photos">
-      <label for="photoInput" class="photo-upload-btn">
-        &#128247; Take or Upload Specimen Photo
-      </label>
-      <input type="file" id="photoInput" accept="image/*" capture="environment" hidden />
+      <div class="photo-actions">
+        <label for="photoInput" class="photo-upload-btn">
+          &#128193; Upload Photo
+        </label>
+        <button type="button" id="openCameraBtn" class="photo-upload-btn">
+          &#128247; Use Camera
+        </button>
+      </div>
+
+      <input type="file" id="photoInput" accept="image/*" hidden />
+
+      <div id="cameraBox" class="camera-box hidden">
+        <video id="cameraStream" autoplay playsinline></video>
+        <div class="camera-controls">
+          <button type="button" id="captureBtn" class="capture-btn">Capture Photo</button>
+          <button type="button" id="closeCameraBtn" class="remove-photo-btn">Cancel</button>
+        </div>
+      </div>
+
+      <canvas id="cameraCanvas" hidden></canvas>
+
       <div id="photoPreviewBox" class="photo-preview-box hidden">
         <img id="photoPreview" src="" alt="Specimen preview" />
         <button type="button" id="removePhotoBtn" class="remove-photo-btn">&times; Remove Photo</button>
